@@ -1,0 +1,9 @@
+## これはなに
+
+MCPServerとLangGraphを用いたアプリケーション開発のための練習用リポジトリになります。
+
+ゴールはMCPServerの構築方法、LangGraphとMCPClientを紐付け、MCPServer内のToolを呼び出す方法を理解することです。
+
+また、合わせてExpressを用いたTypeScriptアプリケーションの実装方法を学ぶこと。
+
+よっしゃ〜やってくでぃ〜〜
