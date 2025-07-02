@@ -2,6 +2,7 @@
   "name": "mcp-typescript-practice",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,13 +16,17 @@
     "@langchain/langgraph": "^0.3.6",
     "@langchain/mcp-adapters": "^0.5.2",
     "@langchain/openai": "^0.5.16",
+    "@modelcontextprotocol/sdk": "^1.13.3",
     "dotenv": "^17.0.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.0.8",
+    "esbuild": "^0.25.5",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   }
 }
