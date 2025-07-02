@@ -1,21 +1,35 @@
-import express from "express";
-import dotenv from "dotenv";
+import express from 'express'
+import dotenv from 'dotenv'
+import { ChatOpenAI } from '@langchain/openai'
+import {
+  StdioClientTransport,
+  type StdioServerParameters,
+} from '@modelcontextprotocol/sdk/client/stdio.js'
 
-dotenv.config();
+dotenv.config()
 
-const app = express();
-const port = process.env.PORT;
+const llm = new ChatOpenAI()
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+const stdioServerParams: StdioServerParameters = {
+  command: 'node',
+  args: [
+    '/Users/hirotokadota/Documents/private_study/mcp-servers/mcp-typescript-practice/servers/mathServer.ts',
+  ],
+}
 
-app.get("/say_hello", (req, res) => {
+const app = express()
+const port = process.env.PORT
+
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+app.get('/say_hello', (req, res) => {
   res.send({
-    message: "Hello World!",
-  });
-});
+    message: 'Hello World!',
+  })
+})
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
+  console.log(`Example app listening at http://localhost:${port}`)
+})
