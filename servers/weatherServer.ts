@@ -1,26 +1,27 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { z } from "zod";
+import { z } from 'zod'
+import { FastMCP } from 'fastmcp'
 
-// TODO: このコードだと動きません
-const server = new McpServer({
-  name: "weather-server",
-  version: "1.0.0",
-});
+const server = new FastMCP({
+  name: 'weather-server',
+  version: '1.0.0',
+})
 
-server.registerTool(
-  "get_weather",
-  {
-    title: "Get Weather Tool",
-    description: "Get weather for location",
-    inputSchema: { location: z.string() },
+server.addTool({
+  name: 'get_weather',
+  description: 'Get weather for location',
+  parameters: z.object({
+    location: z.string(),
+  }),
+  execute: async (args) => {
+    return `Current weather in ${args.location}: Hot as hell`
   },
-  async ({ location }) => ({
-    content: [{ type: "text", text: "Hot as hell" }],
-  })
-);
+})
 
-const transport = new StreamableHTTPServerTransport({
-  sessionIdGenerator: undefined,
-});
-await server.connect(transport);
+server.start({
+  transportType: 'httpStream',
+  httpStream: {
+    port: 3030,
+  },
+})
+
+console.log('Weather server listening on port 3030')

@@ -1,59 +1,59 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { z } from "zod";
+import { z } from 'zod'
+import { FastMCP } from 'fastmcp'
 
-const server = new McpServer({
-  name: "math-server",
-  version: "1.0.0",
-});
+const server = new FastMCP({
+  name: 'math-server',
+  version: '1.0.0',
+})
 
-server.registerTool(
-  "add",
-  {
-    title: "Addition Tool",
-    description: "Add two numbers",
-    inputSchema: { a: z.number(), b: z.number() },
+server.addTool({
+  name: 'add',
+  description: 'Add two numbers',
+  parameters: z.object({
+    a: z.number(),
+    b: z.number(),
+  }),
+  execute: async (args) => {
+    return String(args.a + args.b)
   },
-  async ({ a, b }) => ({
-    content: [{ type: "text", text: String(a + b) }],
-  })
-);
+})
 
-server.registerTool(
-  "subtract",
-  {
-    title: "Subtraction Tool",
-    description: "Subtract two numbers",
-    inputSchema: { a: z.number(), b: z.number() },
+server.addTool({
+  name: 'subtract',
+  description: 'Subtract two numbers',
+  parameters: z.object({
+    a: z.number(),
+    b: z.number(),
+  }),
+  execute: async (args) => {
+    return String(args.a - args.b)
   },
-  async ({ a, b }) => ({
-    content: [{ type: "text", text: String(a - b) }],
-  })
-);
+})
 
-server.registerTool(
-  "multiply",
-  {
-    title: "Multiplication Tool",
-    description: "Multiply two numbers",
-    inputSchema: { a: z.number(), b: z.number() },
+server.addTool({
+  name: 'multiply',
+  description: 'Multiply two numbers',
+  parameters: z.object({
+    a: z.number(),
+    b: z.number(),
+  }),
+  execute: async (args) => {
+    return String(args.a * args.b)
   },
-  async ({ a, b }) => ({
-    content: [{ type: "text", text: String(a * b) }],
-  })
-);
+})
 
-server.registerTool(
-  "division",
-  {
-    title: "Division Tool",
-    description: "Divide two numbers",
-    inputSchema: { a: z.number(), b: z.number() },
+server.addTool({
+  name: 'division',
+  description: 'Divide two numbers',
+  parameters: z.object({
+    a: z.number(),
+    b: z.number(),
+  }),
+  execute: async (args) => {
+    return String(args.a / args.b)
   },
-  async ({ a, b }) => ({
-    content: [{ type: "text", text: String(a / b) }],
-  })
-);
+})
 
-const transport = new StdioServerTransport();
-await server.connect(transport);
+server.start({
+  transportType: 'stdio',
+})
