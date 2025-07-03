@@ -5,10 +5,16 @@ import {
   StdioClientTransport,
   type StdioServerParameters,
 } from '@modelcontextprotocol/sdk/client/stdio.js'
+import { Client } from '@modelcontextprotocol/sdk/client/index.js'
+import { createReactAgent } from '@langchain/langgraph/prebuilt'
+import { loadMcpTools } from '@langchain/mcp-adapters'
+import { HumanMessage } from '@langchain/core/messages'
 
 dotenv.config()
 
-const llm = new ChatOpenAI()
+const llm = new ChatOpenAI({
+  temperature: 0,
+})
 
 const stdioServerParams: StdioServerParameters = {
   command: 'node',
@@ -16,18 +22,45 @@ const stdioServerParams: StdioServerParameters = {
     '/Users/hirotokadota/Documents/private_study/mcp-servers/mcp-typescript-practice/servers/mathServer.ts',
   ],
 }
+const transport = new StdioClientTransport(stdioServerParams)
+const client = new Client({
+  name: 'example-client',
+  version: '1.0.0',
+})
 
 const app = express()
 const port = process.env.PORT
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+app.get('/', async (req, res) => {
+  try {
+    await client.connect(transport)
+    console.log('session initialized!!!')
 
-app.get('/say_hello', (req, res) => {
-  res.send({
-    message: 'Hello World!',
-  })
+    const tools = await loadMcpTools('math-server', client)
+    console.log(tools)
+
+    const agent = createReactAgent({
+      llm,
+      tools,
+    })
+
+    const result = await agent.invoke({
+      messages: new HumanMessage(
+        '①(2+4+10+3-10-20)*12/10 と②1+2+3+4+5+6+7+8+9-10は？',
+      ),
+    })
+    console.log(result)
+    console.log(result.messages[result.messages.length - 1].content)
+    res.send(result.messages[result.messages.length - 1].content)
+  } catch (error) {
+    console.error('Error: ', error)
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'なんか起きたっぽい',
+    })
+  } finally {
+    client.close()
+  }
 })
 
 app.listen(port, () => {
