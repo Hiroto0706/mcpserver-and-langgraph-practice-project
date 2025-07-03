@@ -8,11 +8,12 @@ import {
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { createReactAgent } from '@langchain/langgraph/prebuilt'
 import { loadMcpTools } from '@langchain/mcp-adapters'
+import { HumanMessage } from '@langchain/core/messages'
 
 dotenv.config()
 
 const llm = new ChatOpenAI({
-  temperature: 1,
+  temperature: 0,
 })
 
 const stdioServerParams: StdioServerParameters = {
@@ -44,13 +45,19 @@ app.get('/', async (req, res) => {
     })
 
     const result = await agent.invoke({
-      messages: '①(2+4+10+3-10-20)*12/10 と②1+2+3+4+5+6+7+8+9-10は？',
+      messages: new HumanMessage(
+        '①(2+4+10+3-10-20)*12/10 と②1+2+3+4+5+6+7+8+9-10は？',
+      ),
     })
+    console.log(result)
     console.log(result.messages[result.messages.length - 1].content)
     res.send(result.messages[result.messages.length - 1].content)
   } catch (error) {
     console.error('Error: ', error)
-    res.send('errored!')
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'なんか起きたっぽい',
+    })
   } finally {
     client.close()
   }
